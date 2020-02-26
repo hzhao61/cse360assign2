@@ -5,6 +5,13 @@
  * Description: The SimpleList file creates a simple list (int array) and does operations on it
  * 				such as add elements to the array, remove elements from the array, count number of elements
  * 				in the array, return the list as a string, and search for elements in the list.
+ * 
+ * 				For assignment 2, in the first version, SimpleList can now increase the size of the list by 50% if the list
+ * 				is full when adding to the list. Also, if the list has more than 25% empty places,
+ * 				the size of the list is decreased by 25%.
+ * 				For assignment 2, in the second version, SimpleList is now able to append the parameter to the end of the list
+ * 				and increases the size of the list by 50% if full. It can also return the first element in the list
+ * 				and the size of the list.
  */
 package cse360assign2;
 
@@ -19,7 +26,9 @@ package cse360assign2;
 public class SimpleList 
 {
 	private int[] list;
+	private int[] tempList;										//temp list created for assignment2 to hold old array before increasing by 50%
 	private int count;
+	private int arraySize;										//variable to keep track of the arraySizes
 	
 	/**
 	 * SimpleList constructor creates an array, list, that holds 10 integers
@@ -29,12 +38,17 @@ public class SimpleList
 	public SimpleList()
 	{
 		list = new int[10];
+		tempList = new int[10];
 		count = 0;
+		arraySize = 10;											//array size is initialized to 10
 	}
 	
 	/**
 	 * add adds the parameter item to the list at the beginning and moves 
 	 * the other integers over so there's room.
+	 * 
+	 * For assignment2, an addition is made so that if the list is full,
+	 * the size of the list is increased by 50%.
 	 * @param listItem int to be added into the list
 	 */
 	
@@ -47,22 +61,44 @@ public class SimpleList
 		}
 		else													//not an empty array
 		{
-			if(count==10)
+			if(count==list.length)
 			{
-				count = 9;
+				for(int index = list.length-1; index >= 0; index--)				//copy the old array into another array
+				{
+					tempList[index] = list[index];								//copy each element
+				}
+				
+				arraySize = arraySize + arraySize/2;							//set new array size
+				list = new int[arraySize];										//list is full, increase the size by 50%	
+				
+				for(int index = tempList.length; index > 0; index--)			//copy the temp array back into new array
+				{
+					list[index] = tempList[index-1];							//copy each element, shifted over one to the right in new array
+				}
+				
+				tempList = new int[arraySize];									//increase tempList to same size as list for next time
+				
+				list[0] = listItem;												//add new item to larger array				
+				count++;														//increment count
 			}
-			for(int index = 9; index > 0; index--)				//max hold 10 ints in array
+			else
 			{
-					list[index] = list[index-1];				//move the rest of the array elements over
+				for(int index = list.length-1; index > 0; index--)				//array not full, same as assignment 1
+				{
+					list[index] = list[index-1];					//move the rest of the array elements over
+				}
+				list[0] = listItem;									//add new item to beginning of array
+				count++;											//increment count for new item
 			}
-			list[0] = listItem;									//add new item to beginning of array
-			count++;											//increment count for new item
 		}
 	}
 	
 	/**
 	 * remove removes the parameter item from the list and moves the other
 	 * values in the list down if needed.
+	 * 
+	 * For assignment2, if the list has more than 25% empty places, 
+	 * decrease the size of the list by 25%.
 	 * @param removeItem int to be removed from the list
 	 */
 	
@@ -77,27 +113,48 @@ public class SimpleList
 			{
 				removeIndex = currentIndex;						//set the removeIndex equal to currentIndex		
 				currentIndex = count;							//set the currentIndex to count so the loop will terminate
-				count--;										//decrease count by 1 
+				count--;										//decrease count by 1, to exit while loop since we got the index to remove
 			}
 			currentIndex++;
 		}
-		if(removeIndex!=9)
+		if(removeIndex!=count)
 		{
-			if(removeIndex!=count)
+			for(int index = removeIndex; index < count; index++)		//if the removeIndex is not the last index, shift the elements down	
 			{
-				for(int index = removeIndex; index < count; index++)		//if the removeIndex is not the last index, shift the elements down	
-				{
-					list[index] = list[index+1];
-				}
+				list[index] = list[index+1];
 			}
-			if(removeIndex==count)											//if removing last element of a not full array
-			{
-				list[removeIndex] = list[removeIndex+1];
-			}
+			list[count] = 0;											//set the removed element to 0 in array
 		}
-		if(removeIndex==9)										//last index
+		if(removeIndex==count)											//last index, since count was decremented above
 		{
-			list[9] = 0;										//remove last array element by setting it to the default 0
+			list[count] = 0;											//remove last array element by setting it to the default 0
+		}
+		
+		if((arraySize-count) > (arraySize/4))								//if number of empty places is greater than 25%	
+		{
+			if(count!=0)
+			{
+				for(int index = count-1; index >= 0; index--)				//copy the old array into another array
+				{
+					tempList[index] = list[index];								//copy each element
+				}
+				
+				arraySize = arraySize - arraySize/4;
+				list = new int[arraySize];										//list is more than 25% empty, decrease size by 1/4 rounded down	
+				
+				for(int index = count-1; index >= 0; index--)			//copy the temp array back into new array
+				{
+					list[index] = tempList[index];								//copy each element back into the new smaller array
+				}
+			
+				tempList = new int[arraySize];								//decrease tempList to same size as list for next time
+			}
+			else															//empty array, decrease size of new array
+			{
+				arraySize = arraySize - arraySize/4;
+				list = new int[arraySize];									//list is more than 25% empty, decrease size by 1/4 rounded down	
+				tempList = new int[arraySize];								//decrease tempList to same size as list for next time
+			}
 		}
 	}
 	
