@@ -61,9 +61,9 @@ public class SimpleList
 		}
 		else													//not an empty array
 		{
-			if(count==list.length)
+			if(count==arraySize)
 			{
-				for(int index = list.length-1; index >= 0; index--)				//copy the old array into another array
+				for(int index = count-1; index >= 0; index--)					//copy the old array into another array
 				{
 					tempList[index] = list[index];								//copy each element
 				}
@@ -83,12 +83,12 @@ public class SimpleList
 			}
 			else
 			{
-				for(int index = list.length-1; index > 0; index--)				//array not full, same as assignment 1
+				for(int index = count; index > 0; index--)						//array not full
 				{
-					list[index] = list[index-1];					//move the rest of the array elements over
+					list[index] = list[index-1];								//move the rest of the array elements over
 				}
-				list[0] = listItem;									//add new item to beginning of array
-				count++;											//increment count for new item
+				list[0] = listItem;												//add new item to beginning of array
+				count++;														//increment count for new item
 			}
 		}
 	}
@@ -106,6 +106,7 @@ public class SimpleList
 	{
 		int currentIndex = 0;									//track currentIndex in list
 		int removeIndex = 0;									//track the index of item to be removed
+		int removed = 0;										//track if an element has been removed
 		
 		while(currentIndex<count)								//test from index 0 to index count
 		{
@@ -114,47 +115,50 @@ public class SimpleList
 				removeIndex = currentIndex;						//set the removeIndex equal to currentIndex		
 				currentIndex = count;							//set the currentIndex to count so the loop will terminate
 				count--;										//decrease count by 1, to exit while loop since we got the index to remove
+				removed = 1;									//removed an element
 			}
 			currentIndex++;
 		}
-		if(removeIndex!=count)
+		if((removeIndex!=count)&&(removed==1))
 		{
-			for(int index = removeIndex; index < count; index++)		//if the removeIndex is not the last index, shift the elements down	
+			for(int index = removeIndex; index < count; index++)			//if the removeIndex is not the last index, shift the elements down	
 			{
 				list[index] = list[index+1];
 			}
-			list[count] = 0;											//set the removed element to 0 in array
+			list[count] = 0;												//set the removed element to 0 in array
 		}
-		if(removeIndex==count)											//last index, since count was decremented above
+		if((removeIndex==count)&&(removed==1))								//last index, since count was decremented above
 		{
-			list[count] = 0;											//remove last array element by setting it to the default 0
+			list[count] = 0;												//remove last array element, set it to the default 0
 		}
 		
 		if((arraySize-count) > (arraySize/4))								//if number of empty places is greater than 25%	
 		{
-			if(count!=0)
+			if((count>=1)&&(removed==1)&&(arraySize>1))						//at least 1 element left and only applies if an element has been removed
 			{
 				for(int index = count-1; index >= 0; index--)				//copy the old array into another array
 				{
-					tempList[index] = list[index];								//copy each element
+					tempList[index] = list[index];							//copy each element
 				}
 				
 				arraySize = arraySize - arraySize/4;
-				list = new int[arraySize];										//list is more than 25% empty, decrease size by 1/4 rounded down	
+				list = new int[arraySize];									//list is more than 25% empty, decrease size by 1/4 rounded down	
 				
-				for(int index = count-1; index >= 0; index--)			//copy the temp array back into new array
+				for(int index = count-1; index >= 0; index--)				//copy the temp array back into new array
 				{
-					list[index] = tempList[index];								//copy each element back into the new smaller array
+					list[index] = tempList[index];							//copy each element back into the new smaller array
 				}
 			
 				tempList = new int[arraySize];								//decrease tempList to same size as list for next time
 			}
-			else															//empty array, decrease size of new array
+/*
+			else															//remove shouldn't be called for an empty array or when nothing removed
 			{
 				arraySize = arraySize - arraySize/4;
 				list = new int[arraySize];									//list is more than 25% empty, decrease size by 1/4 rounded down	
 				tempList = new int[arraySize];								//decrease tempList to same size as list for next time
 			}
+*/
 		}
 	}
 	
@@ -176,14 +180,7 @@ public class SimpleList
 	public String toString()
 	{
 		String str = "";										//initlize string to hold final string list
-		/*
-		if(count==0)											DELETED, FOR TESTING
-		{
-			str = null;											//empty array, set equal to null for testing
-		}
-		*/
-//		else
-//		{
+		
 		if(count!=0)
 		{
 			for(int index = 0; index < count-1; index++)
@@ -192,7 +189,6 @@ public class SimpleList
 			}
 			str = str + list[count-1];							//add the last list element so there is no extra space at the end
 		}
-//		}
 		return str;
 	}
 	
@@ -213,5 +209,97 @@ public class SimpleList
 			}
 		}
 		return found;											//if found still = -1, not found 
+	}
+	
+	/**
+	 * append appends the parameter int to the end of the list.
+	 * If the list is full, it increase the size of the list by 50%. It also 
+	 * increments the count.
+	 * @param appendItem the integer to be appended to the list
+	 */
+	
+	public void append(int appendItem)
+	{
+		if(count==0)															//empty array
+		{	
+			list[0] = appendItem;												//add parameter int to beginning of array
+			count++;															//increment count
+		}
+		else																	//not an empty array
+		{
+			if(count==arraySize)
+			{
+				for(int index = list.length-1; index >= 0; index--)				//copy the old array into another array
+				{
+					tempList[index] = list[index];								//copy each element
+				}
+				
+				arraySize = arraySize + arraySize/2;							//set new array size
+				list = new int[arraySize];										//list is full, increase the size by 50%	
+				
+				for(int index = 0; index < tempList.length; index++)			//copy the temp array back into new array
+				{
+					list[index] = tempList[index];								//copy each element, shifted over one to the right in new array
+				}
+				
+				tempList = new int[arraySize];									//increase tempList to same size as list for next time
+				
+				list[count] = appendItem;										//add new item to larger array at end				
+				count++;														//increment count
+			}
+			else
+			{
+				list[count] = appendItem;										//append new item to end of array
+				count++;														//increment count for new item
+			}
+		}
+	}
+	
+	/**
+	 * first finds and returns the first element in the list.
+	 * @return the first element (int) in the list
+	 */
+	
+	public int first()
+	{
+		int firstElement = 0;
+		if(count==0)
+		{
+			firstElement = -1;
+		}
+		else
+		{
+			firstElement = list[0];
+		}
+		return firstElement;
+	}
+	
+	/**
+	 * last finds and returns the last element in the list
+	 * @return the last element (int) in the list
+	 */
+	
+	public int last()
+	{
+		int lastElement = 0;
+		if(count==0)
+		{
+			lastElement = -1;
+		}
+		else
+		{
+			lastElement = list[count-1];
+		}
+		return lastElement;
+	}
+	
+	/**
+	 * size returns the current number of possible locations.
+	 * @return the number of possible locations in the list
+	 */
+	
+	public int size()
+	{
+		return arraySize;										//arraySize holds the current number of possible locations
 	}
 }
