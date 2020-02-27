@@ -1429,6 +1429,72 @@ class SimpleListTest
 		assertNotEquals("4 2 5 3 4 2 5 3 4 2 5 3 6 9 7", tester.toString());
 	}
 
+	@Test
+	public void appendTestPass6() 
+	{
+		SimpleList tester = new SimpleList();
+		tester.append(4);
+		tester.append(2);
+		tester.append(5);
+		tester.append(3);
+		tester.append(4);
+		tester.append(2);
+		tester.append(5);
+		tester.append(3);
+		tester.append(4);
+		tester.append(2);
+		tester.append(5);
+		tester.append(3);
+		tester.append(6);
+		tester.append(9);
+		tester.append(7);
+		tester.remove(2);
+		tester.remove(7);
+		tester.append(9);
+		tester.append(10);
+		tester.remove(4);
+		tester.remove(5);
+		tester.remove(3);
+		tester.remove(4);
+		tester.remove(2);
+		tester.remove(5);
+		tester.append(11);
+		assertEquals("3 4 2 5 3 6 9 9 10 11", tester.toString());
+	}
+	
+	@Test
+	public void appendTestFail6() 
+	{
+		SimpleList tester = new SimpleList();
+		tester.append(4);
+		tester.append(2);
+		tester.append(5);
+		tester.append(3);
+		tester.append(4);
+		tester.append(2);
+		tester.append(5);
+		tester.append(3);
+		tester.append(4);
+		tester.append(2);
+		tester.append(5);
+		tester.append(3);
+		tester.append(6);
+		tester.append(9);
+		tester.append(7);
+		tester.remove(2);
+		tester.remove(7);
+		tester.append(9);
+		tester.append(10);
+		tester.remove(4);
+		tester.remove(5);
+		tester.remove(3);
+		tester.remove(4);
+		tester.remove(2);
+		tester.remove(5);
+		tester.append(11);
+		assertNotEquals("3 4 2 5 3 6 9 9 10 11", tester.toString());
+	}
+	
 	/**
 	 * firstTest makes sure that the first element of the list is returned
 	 * correctly.
@@ -1937,5 +2003,23 @@ class SimpleListTest
 		tester.remove(5);
 		tester.remove(6);
 		assertNotEquals(3, tester.size());	
+	}
+	
+	@Test
+	public void sizeTestPass10() 
+	{
+		SimpleList tester = new SimpleList();
+		tester.add(10);
+		tester.remove(10);
+		assertEquals(8, tester.size());	
+	}
+	
+	@Test
+	public void sizeTestFail10() 
+	{
+		SimpleList tester = new SimpleList();
+		tester.add(10);
+		tester.remove(10);
+		assertNotEquals(8, tester.size());	
 	}
 }

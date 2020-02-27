@@ -10,7 +10,7 @@
  * 				is full when adding to the list. Also, if the list has more than 25% empty places,
  * 				the size of the list is decreased by 25%.
  * 				For assignment 2, in the second version, SimpleList is now able to append the parameter to the end of the list
- * 				and increases the size of the list by 50% if full. It can also return the first element in the list
+ * 				and increases the size of the list by 50% if full. It can also return the first element and last element in the list
  * 				and the size of the list.
  */
 package cse360assign2;
@@ -125,7 +125,7 @@ public class SimpleList
 			{
 				list[index] = list[index+1];
 			}
-			list[count] = 0;												//set the removed element to 0 in array
+			list[count] = 0;												//set the removed element to 0 in array to signify removed
 		}
 		if((removeIndex==count)&&(removed==1))								//last index, since count was decremented above
 		{
@@ -134,7 +134,7 @@ public class SimpleList
 		
 		if((arraySize-count) > (arraySize/4))								//if number of empty places is greater than 25%	
 		{
-			if((count>=1)&&(removed==1)&&(arraySize>1))						//at least 1 element left and only applies if an element has been removed
+			if((removed==1)&&(arraySize>1))									//at least 1 arraySize and only applies if an element has been removed
 			{
 				for(int index = count-1; index >= 0; index--)				//copy the old array into another array
 				{
@@ -229,7 +229,7 @@ public class SimpleList
 		{
 			if(count==arraySize)
 			{
-				for(int index = list.length-1; index >= 0; index--)				//copy the old array into another array
+				for(int index = count-1; index >= 0; index--)					//copy the old array into another array
 				{
 					tempList[index] = list[index];								//copy each element
 				}
@@ -262,7 +262,7 @@ public class SimpleList
 	
 	public int first()
 	{
-		int firstElement = 0;
+		int firstElement;
 		if(count==0)
 		{
 			firstElement = -1;
@@ -281,7 +281,7 @@ public class SimpleList
 	
 	public int last()
 	{
-		int lastElement = 0;
+		int lastElement;
 		if(count==0)
 		{
 			lastElement = -1;
